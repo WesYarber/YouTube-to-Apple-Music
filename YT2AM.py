@@ -1,41 +1,38 @@
-import customtkinter as ctk
-from pytube import YouTube, Playlist
-import tkinter as tk
-from PIL import Image, ImageTk
-import requests
+import os
+from sys import platform
+import re
+import shutil
 from io import BytesIO
 import getpass
-from sys import platform
-import tkinter.filedialog as filedialog
-import os
+import tkinter as tk
+import requests
+from PIL import Image, ImageTk
+from pytube import YouTube, Playlist
 from mutagen.mp4 import MP4, MP4Cover
 from tempfile import NamedTemporaryFile
-import shutil
-import re
-import sys
+import customtkinter as ctk
+import tkinter.filedialog as filedialog
 
+# Initialize constants
+thumbnail_width = 100
 
-if platform == "linux" or platform == "linux2":
-    print("Not yet configured to output move the file to Apple music on Linux.")
-    print("Please update the code for others if you want to add this functionality!")
+# Initialize globals
+download_folder = os.getcwd()
+video_details_widgets = []
+
+# Set up paths based on the platform
+if platform in ("linux", "linux2"):
+    print("Linux platform is not yet configured to move the file to Apple Music.")
 elif platform == "darwin":
     username = getpass.getuser()
     apple_music_path = f"/Users/{username}/Music/Music/Media.localized/Automatically Add to Music.localized"
 elif platform == "win32":
-    print("Not yet configured to output move the file to Apple music on Windows.")
-    print("Please update the code for others if you want to add this functionality!")
-
-global download_folder 
-download_folder = os.getcwd()
-video_details_widgets = []
-thumbnail_width = 100
+    print("Windows platform is not yet configured to move the file to Apple Music.")
 
 def get_video_urls(playlist_url):
+    """Get all video URLs from a YouTube playlist."""
     playlist = Playlist(playlist_url)
-    
-    # Fetch video URLs in the playlist
     video_urls = list(playlist.video_urls)
-    # print(video_urls)
     return video_urls
 
 def make_safe_filename(s):
@@ -243,20 +240,16 @@ def display_youtube_video_details(link, audio_only):
     label_title.grid(row=0, column=0, sticky="w")
     label_uploader.grid(row=1, column=0, sticky="w")
     
+    # Display whether audio or video was downloaded
     if audio_only:
         file_format = "Audio"
     else:
         file_format = "Video"
-        
-    
     label_format = tk.Label(text_details_frame, text=f"Format: {file_format}", font=('default',10))
     label_format.grid(row=2, column=0, sticky="w")
 
     text_details_frame.columnconfigure(0, weight=1)  # Allow the first column to expand
 
-    # save_location = 
-
-    # video_details_widgets.extend([label_title, label_uploader, label_views])
     video_details_widgets.extend([label_title, label_uploader, label_format])
 
 def on_progress (stream, chunk, bytes_remaining):
@@ -291,60 +284,59 @@ def show_progress_bar():
     finishLabel.grid_remove()
     progress_label.pack(padx=(10,0), side="left")
     progress_bar.pack(padx=10, side="left")
-    
-ctk.set_appearance_mode("Syste m")
-ctk.set_default_color_theme("blue")
 
-app = ctk.CTk()
-app.geometry("1x1")
-app.title("Youtube to Apple Music")
+if __name__ == "__main__":
+    ctk.set_appearance_mode("Syste m")
+    ctk.set_default_color_theme("blue")
 
-# Download frame
-download_frame = ctk.CTkFrame(app)
-download_frame.pack(padx=10, pady=10)
+    app = ctk.CTk()
+    app.geometry("1x1")
+    app.title("Youtube to Apple Music")
 
-link_frame = ctk.CTkFrame(download_frame)
-link_frame.grid(row=0, column=0, padx=10, pady=(10,5))
-button_frame = ctk.CTkFrame(download_frame)
-button_frame.grid(row=1, column=0, padx=10, pady=(5,10), sticky="ew")
+    # Download frame
+    download_frame = ctk.CTkFrame(app)
+    download_frame.pack(padx=10, pady=10)
 
-# Configure the column weights to distribute extra space equally
-button_frame.columnconfigure(0, weight=1)
-button_frame.columnconfigure(1, weight=1)
-button_frame.columnconfigure(2, weight=1)  # Create an extra column to hold the additional space
+    link_frame = ctk.CTkFrame(download_frame)
+    link_frame.grid(row=0, column=0, padx=10, pady=(10,5))
+    button_frame = ctk.CTkFrame(download_frame)
+    button_frame.grid(row=1, column=0, padx=10, pady=(5,10), sticky="ew")
 
-progress_frame = ctk.CTkFrame(download_frame)
-progress_frame.grid(row=2, column=0, padx=10, pady=(5,5))
+    # Configure the column weights to distribute extra space equally
+    button_frame.columnconfigure(0, weight=1)
+    button_frame.columnconfigure(1, weight=1)
+    button_frame.columnconfigure(2, weight=1)  # Create an extra column to hold the additional space
 
-# Link text and title
-# link_description = ctk.CTkLabel(link_frame, text="YouTube link:", font=("default", 13))
-# link_description.pack(anchor="w", padx=10, pady=10, side='left')
-link = ctk.CTkEntry(link_frame, width=400, height=25, placeholder_text="Paste YouTube link here")
-link.pack(fill="x", padx=10, pady=10, side='left')
-# Progress bar
-progress_label = ctk.CTkLabel(progress_frame, text="0%")
-progress_label.pack(padx=(10,0), side="left")
-progress_bar = ctk.CTkProgressBar(progress_frame, width=415)
-progress_bar.set(0)
-progress_bar.pack(padx=10, side="left")
-# Download buttons
-video_download_button = ctk.CTkButton(button_frame, text="Download Video", command=start_video_download)
-video_download_button.grid(row=0, column=0, padx=(10,0), pady=10, sticky="ew")
-audio_download_button = ctk.CTkButton(button_frame, text="Download Audio", command=start_audio_download)
-audio_download_button.grid(row=0, column=2, padx=(0,10), pady=10, sticky="ew")
+    progress_frame = ctk.CTkFrame(download_frame)
+    progress_frame.grid(row=2, column=0, padx=10, pady=(5,5))
 
-# Create a button to open the folder selection dialog
-button_size = 15
-folder_icon_path = '/Users/w0y01ne/Desktop/YouTube Downloader/folder_icon.png'
-folder_icon = ctk.CTkImage(Image.open(folder_icon_path), size=(button_size, button_size))
-select_folder_button = ctk.CTkButton(link_frame, image=folder_icon, text="", command=select_download_folder, width=button_size, height=button_size)
-select_folder_button.pack(fill="x", padx=(0,10), pady=10, side='left')
+    # Link text
+    link = ctk.CTkEntry(link_frame, width=400, height=25, placeholder_text="Paste YouTube link here")
+    link.pack(fill="x", padx=10, pady=10, side='left')
+    # Progress bar
+    progress_label = ctk.CTkLabel(progress_frame, text="0%")
+    progress_label.pack(padx=(10,0), side="left")
+    progress_bar = ctk.CTkProgressBar(progress_frame, width=415)
+    progress_bar.set(0)
+    progress_bar.pack(padx=10, side="left")
+    # Download buttons
+    video_download_button = ctk.CTkButton(button_frame, text="Download Video", command=start_video_download)
+    video_download_button.grid(row=0, column=0, padx=(10,0), pady=10, sticky="ew")
+    audio_download_button = ctk.CTkButton(button_frame, text="Download Audio", command=start_audio_download)
+    audio_download_button.grid(row=0, column=2, padx=(0,10), pady=10, sticky="ew")
 
-# Finished DownLoading
-finishLabel = ctk.CTkLabel(download_frame, text="")
+    # Create a button to open the folder selection dialog
+    button_size = 15
+    folder_icon_path = '/Users/w0y01ne/Desktop/YouTube Downloader/folder_icon.png'
+    folder_icon = ctk.CTkImage(Image.open(folder_icon_path), size=(button_size, button_size))
+    select_folder_button = ctk.CTkButton(link_frame, image=folder_icon, text="", command=select_download_folder, width=button_size, height=button_size)
+    select_folder_button.pack(fill="x", padx=(0,10), pady=10, side='left')
 
-hide_progress_frame()
+    # Finished DownLoading
+    finishLabel = ctk.CTkLabel(download_frame, text="")
 
-# Run app
-resize_window_to_fit_contents()
-app.mainloop()
+    hide_progress_frame()
+
+    # Run app
+    resize_window_to_fit_contents()
+    app.mainloop()
