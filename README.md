@@ -1,7 +1,7 @@
 # YouTube-to-Apple-Music
 This is a simple tool for downloading YouTube video audio, setting metadata, and moving the tracks automatically into your Apple Music library.
 
-![alt text](https://github.com/WesYarber/YouTube-to-Apple-Music/blob/master/example%20images/playlist%20download.png| width=100))
+![alt text](https://github.com/WesYarber/YouTube-to-Apple-Music/blob/master/example%20images/playlist%20download.png | width=100))
 
 If you click "Download Video", it will download all video to your current directory, or if you select a different directory, it will download them to that.
 
