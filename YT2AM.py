@@ -7,7 +7,7 @@ import getpass
 import tkinter as tk
 import requests
 from PIL import Image, ImageTk
-from pytube import YouTube, Playlist
+from pytubefix import YouTube, Playlist
 from mutagen.mp4 import MP4, MP4Cover
 from tempfile import NamedTemporaryFile
 import customtkinter as ctk

@@ -8,6 +8,6 @@ dependencies = [
     "customtkinter==5.2.0",
     "mutagen==1.47.0",
     "pillow==10.0.0",
-    "pytube==15.0.0",
+    "pytubefix>=10.2.1",
     "requests==2.31.0",
 ]
