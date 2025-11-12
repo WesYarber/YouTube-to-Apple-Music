@@ -21,7 +21,7 @@ If you are on Mac, you should be able to run the YT2AM-MacOS executable. On Mac 
 
 ```bash
 uv sync
-python YT2AM.py
+uv run YT2AM.py
 ```
 
 For Linux, you will need to install the python libraries and run it that way. You will then need to figure out how to move the files to Apple Music
