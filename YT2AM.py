@@ -329,7 +329,10 @@ if __name__ == "__main__":
 
     # Create a button to open the folder selection dialog
     button_size = 15
-    select_folder_button = ctk.CTkButton(link_frame, text="Folder", command=select_download_folder, width=button_size, height=button_size)
+    folder_icon_path = os.path.join(os.path.dirname(__file__), "folder_icon.png")
+    folder_icon = ctk.CTkImage(Image.open(folder_icon_path), size=(button_size, button_size))
+    select_folder_button = ctk.CTkButton(link_frame, image=folder_icon, text="", command=select_download_folder,
+                                         width=button_size, height=button_size)
     select_folder_button.pack(fill="x", padx=(0,10), pady=10, side='left')
 
     # Finished DownLoading
