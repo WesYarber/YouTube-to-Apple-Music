@@ -7,7 +7,7 @@ import getpass
 import tkinter as tk
 import requests
 from PIL import Image, ImageTk
-from pytube import YouTube, Playlist
+from pytubefix import YouTube, Playlist
 from mutagen.mp4 import MP4, MP4Cover
 from tempfile import NamedTemporaryFile
 import customtkinter as ctk
@@ -27,7 +27,8 @@ elif platform == "darwin":
     username = getpass.getuser()
     apple_music_path = f"/Users/{username}/Music/Music/Media.localized/Automatically Add to Music.localized"
 elif platform == "win32":
-    print("Windows platform is not yet configured to move the file to Apple Music.")
+    username = getpass.getuser()
+    apple_music_path = f"C:\\Users\\{username}\\Music\\Apple Music\\Media\\Automatically Add to Apple Music"
 
 def get_video_urls(playlist_url):
     """Get all video URLs from a YouTube playlist."""
@@ -133,7 +134,8 @@ def start_download(audio_only, opt_url='none'):
         display_youtube_video_details(ytLink, audio_only)
         
         # Creating a temporary file to store the downloaded audio/video
-        temp_file = NamedTemporaryFile(delete=False, suffix=".mp4")  
+        temp_file = NamedTemporaryFile(delete=False, suffix=".mp4")
+        temp_file.close() # Release the file lock so pytube can write to it
         
         show_progress_frame()
         show_progress_bar()
@@ -327,9 +329,10 @@ if __name__ == "__main__":
 
     # Create a button to open the folder selection dialog
     button_size = 15
-    folder_icon_path = '/Users/w0y01ne/Desktop/YouTube Downloader/folder_icon.png'
+    folder_icon_path = os.path.join(os.path.dirname(__file__), "folder_icon.png")
     folder_icon = ctk.CTkImage(Image.open(folder_icon_path), size=(button_size, button_size))
-    select_folder_button = ctk.CTkButton(link_frame, image=folder_icon, text="", command=select_download_folder, width=button_size, height=button_size)
+    select_folder_button = ctk.CTkButton(link_frame, image=folder_icon, text="", command=select_download_folder,
+                                         width=button_size, height=button_size)
     select_folder_button.pack(fill="x", padx=(0,10), pady=10, side='left')
 
     # Finished DownLoading

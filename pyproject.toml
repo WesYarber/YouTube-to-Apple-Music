@@ -1,0 +1,13 @@
+[project]
+name = "youtube-to-apple-music"
+version = "0.1.0"
+description = "This is a simple tool for downloading YouTube video audio, setting metadata, and moving the tracks automatically into your Apple Music library."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "customtkinter==5.2.0",
+    "mutagen==1.47.0",
+    "pillow==10.0.0",
+    "pytubefix>=10.2.1",
+    "requests==2.31.0",
+]
